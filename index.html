@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozy Match - Memory Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main id="game-container" class="layout-container">
+        
+        <header id="game-header" class="hidden">
+            <div class="hud-item">
+                <span class="hud-label" aria-label="Moves Count">Moves:</span>
+                <span id="moves-count" class="hud-value">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label" aria-label="Time Elapsed">Time:</span>
+                <span id="time-elapsed" class="hud-value">0:00</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label" aria-label="Matched Pairs">Matches:</span>
+                <span id="matched-pairs" class="hud-value">0</span>
+            </div>
+            <button id="pause-button" class="action-button icon-button" aria-label="Pause Game">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
+        </header>
+
+        <div id="game-board" class="game-grid">
+            </div>
+
+        <aside id="high-scores-panel" class="high-scores-panel">
+            <h2>🏆 Best Scores</h2>
+            <ul id="high-score-list">
+                </ul>
+        </aside>
+
+        <div id="modals-container">
+            <section id="start-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="start-title">
+                <div class="modal-content">
+                    <h1 id="start-title">Cozy Match</h1>
+                    <p class="microcopy">Welcome! Match all pairs to win. Choose your challenge:</p>
+                    <div class="difficulty-selector" role="radiogroup" aria-label="Select Game Difficulty">
+                        <label>
+                            <input type="radio" name="difficulty" value="easy" checked>
+                            <span class="difficulty-button" data-grid="4x3" aria-label="Easy mode, 4 by 3 grid">Easy (4x3)</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="difficulty" value="normal">
+                            <span class="difficulty-button" data-grid="4x4" aria-label="Normal mode, 4 by 4 grid">Normal (4x4)</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="difficulty" value="hard">
+                            <span class="difficulty-button" data-grid="6x4" aria-label="Hard mode, 6 by 4 grid">Hard (6x4)</span>
+                        </label>
+                    </div>
+                    <button id="start-game-button" class="action-button primary-button">Play Game</button>
+                    <button id="settings-button-start" class="action-button secondary-button icon-button" aria-label="Open Settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                </div>
+            </section>
+
+            <section id="end-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="end-title">
+                <div class="modal-content">
+                    <h2 id="end-title">🎉 You Did It!</h2>
+                    <p>Congratulations, you matched all the pairs!</p>
+                    <div id="end-stats" class="stats-grid">
+                        </div>
+                    <p id="new-high-score-message" class="highlight-text hidden">New Best Score for this Difficulty!</p>
+                    <div class="modal-actions">
+                        <button id="replay-button" class="action-button primary-button">Play Again</button>
+                        <button id="share-button" class="action-button secondary-button icon-button" aria-label="Share Score">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.42" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+                <div class="modal-content">
+                    <h2 id="settings-title">⚙️ Game Settings</h2>
+                    <div class="settings-group">
+                        <h3>Accessibility & Theme</h3>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="hc-toggle">
+                            <span class="slider round"></span>
+                            High Contrast Mode
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="motion-toggle">
+                            <span class="slider round"></span>
+                            Reduce Animations
+                        </label>
+                        <label for="theme-selector">Color Theme:</label>
+                        <select id="theme-selector">
+                            <option value="default">Default</option>
+                            <option value="pastel">Pastel</option>
+                            <option value="dark">Dark Mode (WIP)</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <h3>Game Feedback</h3>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="sound-toggle" checked>
+                            <span class="slider round"></span>
+                            Sound Effects
+                        </label>
+                        <p class="microcopy">Note: Sound files are placeholders.</p>
+                    </div>
+                    <button id="close-settings" class="action-button primary-button">Close</button>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>
